@@ -1,0 +1,29 @@
+# Terraform working directory and downloaded providers
+**/.terraform/*
+
+# Terraform state files
+*.tfstate
+*.tfstate.*
+*.tfstate.backup
+
+# Terraform crash logs
+crash.log
+crash.*.log
+
+# Local variable files that may contain secrets
+*.tfvars
+*.tfvars.json
+!example.tfvars
+
+# Local override files
+override.tf
+override.tf.json
+*_override.tf
+*_override.tf.json
+
+# Sensitive local files
+.env
+.env.*
+
+# macOS files
+.DS_Store

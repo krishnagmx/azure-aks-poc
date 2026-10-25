@@ -1,0 +1,15 @@
+<!DOCTYPE html>
+<html>
+<head><title>AKS PoC</title></head>
+<body style="font-family: sans-serif; padding: 40px;">
+  <h1>AKS PoC Frontend</h1>
+  <button onclick="check()">Check Backend</button>
+  <pre id="out"></pre>
+  <script>
+    async function check() {
+      const res = await fetch('/api/health');
+      document.getElementById('out').textContent = await res.text();
+    }
+  </script>
+</body>
+</html>
