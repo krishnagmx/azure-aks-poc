@@ -1,0 +1,51 @@
+name: Build and Deploy to AKS
+
+on:
+  push:
+    branches: [ main ]
+    paths:
+      - 'src/**'
+      - 'k8s/**'
+  workflow_dispatch:
+
+env:
+  ACR_LOGIN_SERVER: akspocacrav74ka.azurecr.io
+  ACR_NAME: akspocacrav74ka
+  RESOURCE_GROUP: akspoc-rg
+  AKS_NAME: akspoc-aks
+  NAMESPACE: poc-app
+
+jobs:
+  build-and-deploy:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v4
+
+      - name: Azure Login
+        uses: azure/login@v2
+        with:
+          creds: ${{ secrets.AZURE_CREDENTIALS }}
+
+      - name: Login to ACR
+        run: az acr login --name ${{ env.ACR_NAME }}
+
+      - name: Build and push backend
+        run: |
+          docker build -t ${{ env.ACR_LOGIN_SERVER }}/backend:${{ github.sha }} -f src/backend/Dockerfile src/backend
+          docker push ${{ env.ACR_LOGIN_SERVER }}/backend:${{ github.sha }}
+
+      - name: Build and push frontend
+        run: |
+          docker build -t ${{ env.ACR_LOGIN_SERVER }}/frontend:${{ github.sha }} -f src/frontend/Dockerfile src/frontend
+          docker push ${{ env.ACR_LOGIN_SERVER }}/frontend:${{ github.sha }}
+
+      - name: Get AKS credentials
+        run: az aks get-credentials --resource-group ${{ env.RESOURCE_GROUP }} --name ${{ env.AKS_NAME }} --overwrite-existing
+
+      - name: Deploy to AKS
+        run: |
+          kubectl set image deployment/backend -n ${{ env.NAMESPACE }} backend=${{ env.ACR_LOGIN_SERVER }}/backend:${{ github.sha }}
+          kubectl set image deployment/frontend -n ${{ env.NAMESPACE }} frontend=${{ env.ACR_LOGIN_SERVER }}/frontend:${{ github.sha }}
+          kubectl rollout status deployment/backend -n ${{ env.NAMESPACE }} --timeout=180s
+          kubectl rollout status deployment/frontend -n ${{ env.NAMESPACE }} --timeout=180s
