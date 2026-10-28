@@ -28,12 +28,16 @@ resource "azurerm_postgresql_flexible_server" "pg" {
   private_dns_zone_id           = azurerm_private_dns_zone.pg.id
   administrator_login           = "pgadmin"
   administrator_password        = var.admin_password
-  sku_name                      = "GP_Standard_D2s_v3" # Free tier SKU
+  sku_name                      = "GP_Standard_D2s_v3"
   storage_mb                    = 32768
   backup_retention_days         = 7
   public_network_access_enabled = false
 
   depends_on = [azurerm_private_dns_zone_virtual_network_link.pg]
+
+  lifecycle {
+    ignore_changes = [zone, high_availability]
+  }
 }
 
 resource "azurerm_postgresql_flexible_server_database" "app" {

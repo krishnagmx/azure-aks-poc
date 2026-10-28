@@ -15,7 +15,7 @@ spec:
     spec:
       containers:
         - name: backend
-          image: akspocacrav74ka.azurecr.io/backend:v1
+          image: akspocacrc8titw.azurecr.io/backend:v1
           ports:
             - containerPort: 5000
 ---

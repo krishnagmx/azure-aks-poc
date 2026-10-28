@@ -20,8 +20,8 @@ resource "azurerm_kubernetes_cluster" "aks" {
   location            = var.location
   resource_group_name = var.resource_group_name
   dns_prefix          = "${var.prefix}aks"
-  #kubernetes_version  = "1.34.6" # Verified for westus3
   sku_tier            = "Free"
+  oidc_issuer_enabled = true
 
   default_node_pool {
     name           = "system"
@@ -51,7 +51,6 @@ resource "azurerm_role_assignment" "aks_acr_pull" {
   principal_id         = azurerm_kubernetes_cluster.aks.kubelet_identity[0].object_id
 }
 
-# CRITICAL: Role assignment for the Key Vault CSI Driver identity
 resource "azurerm_role_assignment" "aks_kv_secrets" {
   scope                = var.key_vault_id
   role_definition_name = "Key Vault Secrets User"
