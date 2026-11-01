@@ -1,0 +1,3 @@
+location  = "westus3"
+prefix    = "akspoc"
+node_size = "Standard_D2s_v4"

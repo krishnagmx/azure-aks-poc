@@ -1,0 +1,12 @@
+NAME                       READY   STATUS    RESTARTS   AGE   IP             NODE                             NOMINATED NODE   READINESS GATES
+pod/app-56c7b49b8d-2kssc   1/1     Running   0          35s   10.244.0.123   aks-system-33956687-vmss000001   <none>           <none>
+pod/app-56c7b49b8d-vsvsv   1/1     Running   0          32s   10.244.1.17    aks-system-33956687-vmss000000   <none>           <none>
+
+NAME                  READY   UP-TO-DATE   AVAILABLE   AGE    CONTAINERS   IMAGES                                                                                                   SELECTOR
+deployment.apps/app   2/2     2            2           3m4s   app          akspocacruhi6uj.azurecr.io/app@sha256:6a49619446b5d09dfd4f8c62c642668ce5b1d6e45f6438ed5f97d1571f160a03   app=app
+
+NAME          TYPE           CLUSTER-IP       EXTERNAL-IP    PORT(S)        AGE    SELECTOR
+service/app   LoadBalancer   172.16.243.249   4.236.11.192   80:32401/TCP   3m4s   app=app
+
+NAME                             MIN AVAILABLE   MAX UNAVAILABLE   ALLOWED DISRUPTIONS   AGE
+poddisruptionbudget.policy/app   1               N/A               1                     3m4s

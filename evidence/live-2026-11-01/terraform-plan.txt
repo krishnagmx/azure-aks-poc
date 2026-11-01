@@ -1,0 +1,19 @@
+Captured Terraform plan output; subscription IDs redacted and trailing spaces trimmed.
+
+Acquiring state lock. This may take a few moments...
+random_string.suffix: Refreshing state... [id=uhi6uj]
+azurerm_resource_group.app: Refreshing state... [id=/subscriptions/<subscription-id>/resourceGroups/akspoc-rg]
+azurerm_user_assigned_identity.app: Refreshing state... [id=/subscriptions/<subscription-id>/resourceGroups/akspoc-rg/providers/Microsoft.ManagedIdentity/userAssignedIdentities/akspoc-app]
+azurerm_container_registry.app: Refreshing state... [id=/subscriptions/<subscription-id>/resourceGroups/akspoc-rg/providers/Microsoft.ContainerRegistry/registries/akspocacruhi6uj]
+azurerm_storage_account.app: Refreshing state... [id=/subscriptions/<subscription-id>/resourceGroups/akspoc-rg/providers/Microsoft.Storage/storageAccounts/akspocsauhi6uj]
+azurerm_kubernetes_cluster.app: Refreshing state... [id=/subscriptions/<subscription-id>/resourceGroups/akspoc-rg/providers/Microsoft.ContainerService/managedClusters/akspoc-aks]
+azurerm_federated_identity_credential.app: Refreshing state... [id=/subscriptions/<subscription-id>/resourceGroups/akspoc-rg/providers/Microsoft.ManagedIdentity/userAssignedIdentities/akspoc-app/federatedIdentityCredentials/aks-app]
+azurerm_role_assignment.pull: Refreshing state... [id=/subscriptions/<subscription-id>/resourceGroups/akspoc-rg/providers/Microsoft.ContainerRegistry/registries/akspocacruhi6uj/providers/Microsoft.Authorization/roleAssignments/8eef4b9d-1c27-db15-e7b9-34b54bbc039a]
+azurerm_storage_container.app: Refreshing state... [id=https://akspocsauhi6uj.blob.core.windows.net/app-data]
+azurerm_role_assignment.blob: Refreshing state... [id=/subscriptions/<subscription-id>/resourceGroups/akspoc-rg/providers/Microsoft.Storage/storageAccounts/akspocsauhi6uj/blobServices/default/containers/app-data/providers/Microsoft.Authorization/roleAssignments/89c56f0d-5f07-2467-b88f-f4c5c20a8081]
+
+No changes. Your infrastructure matches the configuration.
+
+Terraform has compared your real infrastructure against your configuration
+and found no differences, so no changes are needed.
+Releasing state lock. This may take a few moments...

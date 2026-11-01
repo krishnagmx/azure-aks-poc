@@ -1,0 +1,12 @@
+{
+  "url": "http://4.236.11.192",
+  "page": "passed",
+  "items": "passed",
+  "storage_round_trips": 3,
+  "health_requests": 100,
+  "concurrency": 10,
+  "failures": 0,
+  "health_latency_ms": {"median": 306.3, "p95": 3825.9, "max": 4268.6},
+  "health_requests_per_second": 15.2,
+  "note": "First public check shortly after initial deployment, before the rollout spread fix."
+}

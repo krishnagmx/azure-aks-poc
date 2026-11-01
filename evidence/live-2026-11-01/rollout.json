@@ -1,0 +1,6 @@
+{
+  "checked_at": "2026-11-01T15:09:26.390032+00:00",
+  "health_checks_during_rollout": 28,
+  "failures": [],
+  "rollout_status": "Waiting for deployment \"app\" rollout to finish: 1 out of 2 new replicas have been updated...\nWaiting for deployment \"app\" rollout to finish: 1 out of 2 new replicas have been updated...\nWaiting for deployment \"app\" rollout to finish: 1 out of 2 new replicas have been updated...\nWaiting for deployment \"app\" rollout to finish: 1 old replicas are pending termination...\nWaiting for deployment \"app\" rollout to finish: 1 old replicas are pending termination...\ndeployment \"app\" successfully rolled out"
+}

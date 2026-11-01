@@ -1,0 +1,8 @@
+{
+  "requests": 200,
+  "concurrency": 10,
+  "median_ms": 9.48,
+  "p95_ms": 33.19,
+  "requests_per_second": 709.3,
+  "note": "Localhost check inside one app pod; excludes public network, LoadBalancer, TLS and Azure Storage. Not a production capacity test."
+}

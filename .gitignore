@@ -2,7 +2,9 @@
 **/.terraform/
 *.tfstate
 *.tfstate.*
-.terraform.lock.hcl
+*.tfplan
+*.tfvars
+!*.tfvars.example
 
 # macOS
 .DS_Store

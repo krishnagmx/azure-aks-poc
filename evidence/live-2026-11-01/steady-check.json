@@ -1,0 +1,16 @@
+{
+  "checked_at": "2026-11-01T15:09:39.050345+00:00",
+  "url": "http://4.236.11.192",
+  "page": "passed",
+  "items": "passed",
+  "storage_round_trips": 3,
+  "health_requests": 100,
+  "concurrency": 10,
+  "failures": 0,
+  "health_latency_ms": {
+    "median": 306.7,
+    "p95": 448.1,
+    "max": 541.4
+  },
+  "health_requests_per_second": 29.1
+}

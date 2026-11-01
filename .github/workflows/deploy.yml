@@ -1,51 +1,67 @@
-name: Build and Deploy to AKS
+name: Check and deploy
 
 on:
+  pull_request:
   push:
-    branches: [ main ]
-    paths:
-      - 'src/**'
-      - 'k8s/**'
+    branches: [main]
   workflow_dispatch:
 
-env:
-  ACR_LOGIN_SERVER: akspocacrc8titw.azurecr.io
-  ACR_NAME: akspocacrc8titw
-  RESOURCE_GROUP: akspoc-rg
-  AKS_NAME: akspoc-aks
-  NAMESPACE: poc-app
+permissions:
+  contents: read
+
+concurrency:
+  group: aks-${{ github.ref }}
+  cancel-in-progress: false
 
 jobs:
-  build-and-deploy:
+  check:
     runs-on: ubuntu-latest
     steps:
-      - name: Checkout
-        uses: actions/checkout@v4
-
-      - name: Azure Login
-        uses: azure/login@v2
+      - uses: actions/checkout@v4
+      - uses: actions/setup-python@v5
         with:
-          creds: ${{ secrets.AZURE_CREDENTIALS }}
+          python-version: '3.11'
+      - uses: hashicorp/setup-terraform@v3
+        with:
+          terraform_version: '1.9.8'
+      - run: pip install -r requirements-dev.txt
+      - run: python -m unittest discover -s tests -v
+      - run: terraform -chdir=infrastructure fmt -check -recursive
+      - run: terraform -chdir=infrastructure init -backend=false -input=false -lockfile=readonly
+      - run: terraform -chdir=infrastructure validate
+      - run: bash -n scripts/*.sh
+      - run: docker build -t aks-app:check -f src/backend/dockerfile src/backend
 
-      - name: Login to ACR
-        run: az acr login --name ${{ env.ACR_NAME }}
-
-      - name: Build and push backend
+  deploy:
+    if: vars.AZURE_DEPLOY_ENABLED == 'true' && github.event_name != 'pull_request' && github.ref == 'refs/heads/main'
+    needs: check
+    runs-on: ubuntu-latest
+    permissions:
+      contents: read
+      id-token: write
+    env:
+      IMAGE_TAG: ${{ github.sha }}
+      TFSTATE_RESOURCE_GROUP: ${{ vars.TFSTATE_RESOURCE_GROUP || 'tfstate-rg' }}
+      TFSTATE_STORAGE_ACCOUNT: ${{ vars.TFSTATE_STORAGE_ACCOUNT }}
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-python@v5
+        with:
+          python-version: '3.11'
+      - run: pip install PyYAML==6.0.3
+      - uses: hashicorp/setup-terraform@v3
+        with:
+          terraform_version: '1.9.8'
+          terraform_wrapper: false
+      - uses: azure/login@v2
+        with:
+          client-id: ${{ vars.AZURE_CLIENT_ID }}
+          tenant-id: ${{ vars.AZURE_TENANT_ID }}
+          subscription-id: ${{ vars.AZURE_SUBSCRIPTION_ID }}
+      - name: Read infrastructure state
         run: |
-          docker build -t ${{ env.ACR_LOGIN_SERVER }}/backend:${{ github.sha }} -f src/backend/Dockerfile src/backend
-          docker push ${{ env.ACR_LOGIN_SERVER }}/backend:${{ github.sha }}
-
-      - name: Build and push frontend
-        run: |
-          docker build -t ${{ env.ACR_LOGIN_SERVER }}/frontend:${{ github.sha }} -f src/frontend/Dockerfile src/frontend
-          docker push ${{ env.ACR_LOGIN_SERVER }}/frontend:${{ github.sha }}
-
-      - name: Get AKS credentials
-        run: az aks get-credentials --resource-group ${{ env.RESOURCE_GROUP }} --name ${{ env.AKS_NAME }} --overwrite-existing
-
-      - name: Deploy to AKS
-        run: |
-          kubectl set image deployment/backend -n ${{ env.NAMESPACE }} backend=${{ env.ACR_LOGIN_SERVER }}/backend:${{ github.sha }}
-          kubectl set image deployment/frontend -n ${{ env.NAMESPACE }} frontend=${{ env.ACR_LOGIN_SERVER }}/frontend:${{ github.sha }}
-          kubectl rollout status deployment/backend -n ${{ env.NAMESPACE }} --timeout=180s
-          kubectl rollout status deployment/frontend -n ${{ env.NAMESPACE }} --timeout=180s
+          : "${TFSTATE_STORAGE_ACCOUNT:?Set repository variable TFSTATE_STORAGE_ACCOUNT}"
+          terraform -chdir=infrastructure init -input=false -reconfigure -lockfile=readonly \
+            -backend-config="resource_group_name=$TFSTATE_RESOURCE_GROUP" \
+            -backend-config="storage_account_name=$TFSTATE_STORAGE_ACCOUNT"
+      - run: bash scripts/deploy.sh

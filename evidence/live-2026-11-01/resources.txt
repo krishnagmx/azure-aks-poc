@@ -1,0 +1,3 @@
+NAME                   CPU(cores)   MEMORY(bytes)
+app-56c7b49b8d-2kssc   47m          99Mi
+app-56c7b49b8d-vsvsv   59m          102Mi
