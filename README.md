@@ -1,4 +1,4 @@
-# Azure AKS · build, test, learn
+# Azure AKS · 
 
 A small, reproducible Azure Kubernetes project demonstrating Terraform,
 container delivery, workload identity and rolling-update testing.
