@@ -29,7 +29,7 @@ jobs:
       - run: terraform -chdir=infrastructure fmt -check -recursive
       - run: terraform -chdir=infrastructure init -backend=false -input=false -lockfile=readonly
       - run: terraform -chdir=infrastructure validate
-      - run: bash -n scripts/*.sh
+      - run: for script in scripts/*.sh; do bash -n "$script"; done
       - run: docker build -t aks-app:check -f src/backend/dockerfile src/backend
 
   deploy:

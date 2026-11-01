@@ -5,6 +5,15 @@ a Docker build for pushes and pull requests. Infrastructure is not applied by CI
 The deploy job is enabled only when `AZURE_DEPLOY_ENABLED` is `true`, on main-branch
 pushes or manual runs, after the check job succeeds.
 
+The committed provider lockfile includes package hashes for Linux amd64 and macOS
+amd64/arm64. When intentionally updating provider selections, regenerate the
+platform hashes and commit the lockfile:
+
+```sh
+terraform -chdir=infrastructure providers lock \
+  -platform=linux_amd64 -platform=darwin_amd64 -platform=darwin_arm64
+```
+
 ## Repository variables
 
 | Variable | Required value |
